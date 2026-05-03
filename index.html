@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#0a0200">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>VOID SWARM – V17</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="screenFlash"></div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- TITLE SCREEN                                   -->
+<!-- ═══════════════════════════════════════════════ -->
+<div id="titleScreen">
+    <canvas id="titleCanvas"></canvas>
+    <div class="title-logo">VOID SWARM</div>
+    <div class="title-sub">SURVIVOR · V17</div>
+    <div class="title-hs" id="titleHS"></div>
+    <button class="btn-start" onclick="goToDashboard()">▶ ENTRER</button>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- DASHBOARD JOUEUR — PORTRAIT MOBILE            -->
+<!-- ═══════════════════════════════════════════════ -->
+<div id="dashboardScreen">
+
+  <!-- Header fixe -->
+  <div class="dash-header">
+    <div class="dash-logo">⚡ VOID SWARM</div>
+    <div class="dash-gold-display">
+      <span class="dash-gold-icon">🪙</span>
+      <span id="dashGoldAmt">0</span>
+    </div>
+    <div class="dash-hs-display">🏆 <span id="dashHS">0</span></div>
+  </div>
+
+  <!-- Hero banner : vrai mage canvas -->
+  <div class="dash-hero-banner">
+    <canvas id="charCanvas"></canvas>
+    <div class="hero-info">
+      <div class="hero-name">VOID RUNNER</div>
+      <div class="hero-level">NV. <span id="dashCharLevel">1</span></div>
+    </div>
+  </div>
+
+  <!-- Tabs navigation horizontale -->
+  <div class="dash-tabs-nav">
+    <div class="dash-tab-btn active" data-tab="build" onclick="switchDashTab(this,'build')">⚗️ BUILD</div>
+    <div class="dash-tab-btn" data-tab="heroes" onclick="switchDashTab(this,'heroes')">🧙 HÉROS</div>
+    <div class="dash-tab-btn" data-tab="weapon" onclick="switchDashTab(this,'weapon')">🗡️ ARMES</div>
+    <div class="dash-tab-btn" data-tab="stats" onclick="switchDashTab(this,'stats')">📊 STATS</div>
+  </div>
+
+  <!-- Contenu scrollable -->
+  <div class="dash-content">
+
+    <!-- TAB : Compétences -->
+    <div class="dash-tab active" id="tab-build">
+      <div class="dash-panel-title">⚗️ ARBRE DE COMPÉTENCES</div>
+      <p class="dash-panel-sub">Persistantes · Achetées avec l'or gagné en jeu</p>
+      <div id="dashUpgradeGrid"></div>
+    </div>
+
+    <!-- TAB : Héros (placeholder futur) -->
+    <div class="dash-tab" id="tab-heroes">
+      <div class="dash-panel-title">🧙 HÉROS</div>
+      <p class="dash-panel-sub">D'autres héros arriveront bientôt…</p>
+      <div class="hero-card selected">
+        <div class="hero-card-canvas-wrap">
+          <canvas id="heroPreviewCanvas" width="80" height="100"></canvas>
+        </div>
+        <div class="hero-card-info">
+          <div class="hero-card-name">VOID MAGE</div>
+          <div class="hero-card-desc">Mage des abysses armé d'une lanterne maudite.</div>
+          <div class="hero-card-status">✅ Actif</div>
+        </div>
+      </div>
+      <div class="hero-card locked">
+        <div class="hero-card-icon">🔒</div>
+        <div class="hero-card-info">
+          <div class="hero-card-name">??? </div>
+          <div class="hero-card-desc">Bientôt disponible…</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB : Armes -->
+    <div class="dash-tab" id="tab-weapon">
+      <div class="dash-panel-title">🗡️ ARMES</div>
+      <p class="dash-panel-sub">L'arme de départ de ta session</p>
+      <div class="weapon-grid" id="weaponGrid">
+        <div class="weapon-card selected" data-weapon="pistol" onclick="selectWeapon(this,'pistol')">
+          <div class="weapon-icon">🔫</div>
+          <div class="weapon-name">PISTOL</div>
+          <div class="weapon-stat">Cadence ★★★★☆</div>
+          <div class="weapon-stat">Dégâts ★★☆☆☆</div>
+          <div class="weapon-cost">Débloqué</div>
+        </div>
+        <div class="weapon-card locked" data-weapon="rifle" onclick="selectWeapon(this,'rifle')">
+          <div class="weapon-icon">🪃</div>
+          <div class="weapon-name">PLASMA RIFLE</div>
+          <div class="weapon-stat">Cadence ★★★☆☆</div>
+          <div class="weapon-stat">Dégâts ★★★★☆</div>
+          <div class="weapon-cost">🪙 800</div>
+        </div>
+        <div class="weapon-card locked" data-weapon="shotgun" onclick="selectWeapon(this,'shotgun')">
+          <div class="weapon-icon">💥</div>
+          <div class="weapon-name">VOID CANNON</div>
+          <div class="weapon-stat">Cadence ★★☆☆☆</div>
+          <div class="weapon-stat">Dégâts ★★★★★</div>
+          <div class="weapon-cost">🪙 1500</div>
+        </div>
+        <div class="weapon-card locked" data-weapon="laser" onclick="selectWeapon(this,'laser')">
+          <div class="weapon-icon">⚡</div>
+          <div class="weapon-name">ARC LASER</div>
+          <div class="weapon-stat">Cadence ★★★★★</div>
+          <div class="weapon-stat">Dégâts ★★★☆☆</div>
+          <div class="weapon-cost">🪙 2500</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB : Stats -->
+    <div class="dash-tab" id="tab-stats">
+      <div class="dash-panel-title">📊 STATISTIQUES</div>
+      <p class="dash-panel-sub">Historique de tes sessions</p>
+      <div class="stats-grid">
+        <div class="stat-block"><div class="stat-block-val" id="statTotalKills">0</div><div class="stat-block-lbl">KILLS TOTAUX</div></div>
+        <div class="stat-block"><div class="stat-block-val" id="statBestScore">0</div><div class="stat-block-lbl">MEILLEUR SCORE</div></div>
+        <div class="stat-block"><div class="stat-block-val" id="statWavesBeaten">0</div><div class="stat-block-lbl">VAGUES BATTUES</div></div>
+        <div class="stat-block"><div class="stat-block-val" id="statGamesPlayed">0</div><div class="stat-block-lbl">PARTIES JOUÉES</div></div>
+        <div class="stat-block"><div class="stat-block-val" id="statGoldEarned">0</div><div class="stat-block-lbl">OR GAGNÉ (TOTAL)</div></div>
+        <div class="stat-block"><div class="stat-block-val" id="statBestCombo">0</div><div class="stat-block-lbl">MEILLEUR COMBO</div></div>
+      </div>
+    </div>
+
+  </div><!-- fin dash-content -->
+
+  <!-- Bouton JOUER fixe en bas -->
+  <button class="dash-play-fab" onclick="startGame()">▶ JOUER</button>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- GAME                                           -->
+<!-- ═══════════════════════════════════════════════ -->
+<canvas id="gameCanvas"></canvas>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- HUD TOP — épuré                               -->
+<!-- ═══════════════════════════════════════════════ -->
+<div id="hudTop">
+    <!-- Bloc HP/XP/Wave condensé -->
+    <div id="hudBars">
+        <div class="bar-row">
+            <span class="bar-lbl">HP</span>
+            <div class="bar-track"><div class="bar-fill hp" id="barHp" style="width:100%"></div></div>
+            <span class="bar-val" id="hudHpVal"></span>
+        </div>
+        <div class="bar-row">
+            <span class="bar-lbl">XP</span>
+            <div class="bar-track"><div class="bar-fill xp" id="barXp" style="width:0%"></div></div>
+            <span class="bar-val" id="hudXpVal"></span>
+        </div>
+    </div>
+
+    <div class="hud-chip"><div class="hud-lbl">VAGUE</div><div class="hud-val wave" id="hudWave">1</div></div>
+    <div class="hud-chip"><div class="hud-lbl">SCORE</div><div class="hud-val score" id="hudScore">0</div></div>
+    <div id="hudCombo">×1</div>
+
+    <div class="hud-spacer"></div>
+
+    <!-- Contrôles : seulement Pause + Menu -->
+    <div id="hudCtrl">
+        <div class="ctrl-btn" id="pauseBtn" onclick="togglePause()" ontouchend="event.preventDefault();togglePause()" title="Pause (P)">⏸</div>
+        <div class="ctrl-btn" onclick="returnToDashboard()" ontouchend="event.preventDefault();returnToDashboard()" style="color:#aaa;border-color:rgba(180,180,180,0.3)" title="Menu">⬅</div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- HUD BOTTOM — joystick centré + sorts au-dessus -->
+<!-- ═══════════════════════════════════════════════ -->
+<div id="hudBot">
+    <!-- Sorts centrés au-dessus du joystick -->
+    <div id="hudAbilities">
+        <div class="ability-btn" id="btnDash" ontouchstart="touchAbility(event,'dash')" onclick="doDash()">
+            <span class="ab-icon">💨</span>
+            <div class="ab-cd" id="cdDash"></div>
+        </div>
+        <div class="ability-btn" id="btnShield" ontouchstart="touchAbility(event,'shield')" onclick="doShield()">
+            <span class="ab-icon">🛡️</span>
+            <div class="ab-cd" id="cdShield"></div>
+        </div>
+        <div class="ability-btn" id="btnNova" ontouchstart="touchAbility(event,'nova')" onclick="doNova()">
+            <span class="ab-icon">💥</span>
+            <div class="ab-cd" id="cdNova"></div>
+        </div>
+    </div>
+
+    <!-- Joystick centré -->
+    <div id="joystickWrap">
+        <div id="joystickBase"></div>
+        <div id="joystickKnob"></div>
+    </div>
+</div>
+
+<div id="killFeed"></div>
+<div id="waveBanner"></div>
+<div id="lootPopup"></div>
+
+<!-- Pause -->
+<div id="pauseOverlay">
+    <h2>PAUSE</h2>
+    <p style="font-family:'Share Tech Mono',monospace;color:rgba(255,255,255,0.3);letter-spacing:3px">APPUYEZ SUR P</p>
+    <div style="display:flex;gap:10px;margin-top:8px">
+        <button onclick="togglePause()">▶ REPRENDRE</button>
+        <button onclick="returnToDashboard()" style="border-color:#f44;color:#f44">⬅ MENU</button>
+    </div>
+</div>
+
+<!-- Panels -->
+<div id="levelUI"   class="panel"></div>
+<div id="buildUI"   class="panel"></div>
+<div id="gameOverUI" class="panel"></div>
+
+<!-- HUD HS discret -->
+<div id="hudHS" style="display:none">🏆 0</div>
+<!-- NV. discret -->
+<div id="hudLevel" style="display:none">1</div>
+<!-- Gold discret pour le game.js -->
+<div id="hudGold" style="display:none">0</div>
+<!-- Sidebar cachée (le game.js en a besoin) -->
+<div id="hudSide" style="display:none">
+    <span id="sbDmg">-</span><span id="sbSpeed">-</span><span id="sbWeapon">-</span>
+    <span id="sbKills">0</span><span id="sbCombo">0</span><span id="sbRegen">-</span>
+    <span id="sbPierce">❌</span><span id="sbAura">❌</span>
+</div>
+<!-- minimap cachée -->
+<div id="minimapWrap" style="display:none">
+    <div id="minimapBox"><canvas id="minimapCanvas" width="120" height="85"></canvas></div>
+</div>
+<!-- Upgrade overlay caché (game.js en a besoin) -->
+<div id="upgradeOverlay" style="display:none">
+    <span id="upgradeGold">0</span>
+    <div id="upgradeGrid"></div>
+</div>
+
+<script src="game.js"></script>
+<script>
+// ═══════════════════════════════════════════════
+// DASHBOARD LOGIC — PORTRAIT MOBILE
+// ═══════════════════════════════════════════════
+
+let dashReady = false;
+
+function goToDashboard() {
+  document.getElementById('titleScreen').style.display = 'none';
+  document.getElementById('dashboardScreen').style.display = 'flex';
+  initDashboard();
+}
+
+function initDashboard() {
+  if (dashReady) { refreshDashboard(); return; }
+  dashReady = true;
+  initCharCanvas();
+  renderDashUpgrades();
+  refreshDashboard();
+}
+
+function refreshDashboard() {
+  const gold = parseInt(localStorage.getItem('vs_gold') || '0');
+  document.getElementById('dashGoldAmt').textContent = gold.toLocaleString();
+
+  const hs = parseInt(localStorage.getItem('vs_hs') || '0');
+  document.getElementById('dashHS').textContent = hs.toLocaleString();
+
+  document.getElementById('statTotalKills').textContent  = (parseInt(localStorage.getItem('vs_totalKills')  || '0')).toLocaleString();
+  document.getElementById('statBestScore').textContent   = (parseInt(localStorage.getItem('vs_hs')          || '0')).toLocaleString();
+  document.getElementById('statWavesBeaten').textContent = (parseInt(localStorage.getItem('vs_wavesBeaten') || '0')).toLocaleString();
+  document.getElementById('statGamesPlayed').textContent = (parseInt(localStorage.getItem('vs_gamesPlayed') || '0')).toLocaleString();
+  document.getElementById('statGoldEarned').textContent  = (parseInt(localStorage.getItem('vs_totalGold')   || '0')).toLocaleString();
+  document.getElementById('statBestCombo').textContent   = (parseInt(localStorage.getItem('vs_bestCombo')   || '0')).toLocaleString();
+
+  const upgCount = Object.keys(JSON.parse(localStorage.getItem('vsUpg17') || '{}')).length;
+  document.getElementById('dashCharLevel').textContent = Math.max(1, upgCount);
+
+  renderDashUpgrades();
+}
+
+function switchDashTab(el, tab) {
+  document.querySelectorAll('.dash-tab-btn').forEach(n => n.classList.remove('active'));
+  document.querySelectorAll('.dash-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-' + tab).classList.add('active');
+}
+
+function renderDashUpgrades() {
+  const grid = document.getElementById('dashUpgradeGrid');
+  if (!grid) return;
+
+  if (typeof UPGRADES === 'undefined') {
+    setTimeout(renderDashUpgrades, 300);
+    return;
+  }
+
+  const bought  = JSON.parse(localStorage.getItem('vsUpg17') || '{}');
+  const gold    = parseInt(localStorage.getItem('vs_gold') || '0');
+  grid.innerHTML = '';
+
+  UPGRADES.forEach(u => {
+    const lvl      = bought[u.id] || 0;
+    const maxed    = lvl >= u.maxLvl;
+    const cost     = Math.floor(u.baseCost * Math.pow(u.costMult, lvl));
+    const canAfford = gold >= cost;
+
+    const card = document.createElement('div');
+    card.className = 'upg-card' + (maxed ? ' maxed' : (!canAfford ? ' cant-afford' : ''));
+    card.innerHTML = `
+      <div class="upg-icon">${u.icon}</div>
+      <div class="upg-name">${u.name}</div>
+      <div class="upg-desc">${u.desc}</div>
+      <div class="upg-cost ${maxed?'maxed':''}">${maxed ? '✅ MAX' : '🪙 '+cost}</div>
+      <div class="upg-bar"><div class="upg-bar-fill" style="width:${(lvl/u.maxLvl*100)}%"></div></div>
+      <div style="font-size:9px;color:rgba(255,255,255,0.25);margin-top:3px">${lvl}/${u.maxLvl}</div>`;
+
+    if (!maxed && canAfford) {
+      card.onclick = () => {
+        if (typeof buyUpg === 'function') {
+          buyUpg(u);
+          refreshDashboard();
+        }
+      };
+    }
+    grid.appendChild(card);
+  });
+}
+
+// Sélection arme
+let activeWeapon = localStorage.getItem('vs_weapon') || 'pistol';
+
+function selectWeapon(el, weapon) {
+  const card = document.querySelector('.weapon-card[data-weapon="'+weapon+'"]');
+  if (card && card.classList.contains('locked')) {
+    const cost = parseInt(card.querySelector('.weapon-cost').textContent.replace(/\D/g,''));
+    const gold = parseInt(localStorage.getItem('vs_gold') || '0');
+    if (gold >= cost) {
+      localStorage.setItem('vs_gold', gold - cost);
+      card.classList.remove('locked');
+      card.querySelector('.weapon-cost').textContent = 'Débloqué';
+      refreshDashboard();
+    } else { flashMsg('Pas assez d\'or ! 🪙'); return; }
+  }
+  document.querySelectorAll('.weapon-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  activeWeapon = weapon;
+  localStorage.setItem('vs_weapon', weapon);
+}
+
+function flashMsg(msg) {
+  const el = document.getElementById('lootPopup');
+  el.textContent = msg;
+  el.style.display = 'block';
+  setTimeout(() => el.style.display = 'none', 1800);
+}
+
+// Retour dashboard depuis le jeu
+function returnToDashboard() {
+  if (typeof paused !== 'undefined' && !paused && typeof togglePause === 'function') togglePause();
+  document.getElementById('hudTop').style.display      = 'none';
+  document.getElementById('hudBot').style.display      = 'none';
+  document.getElementById('gameCanvas').style.display  = 'none';
+  document.getElementById('gameOverUI').style.display  = 'none';
+  document.getElementById('pauseOverlay').classList.remove('active');
+  document.getElementById('dashboardScreen').style.display = 'flex';
+  refreshDashboard();
+}
+
+// Overwrite startGame pour masquer dashboard
+const _origStartGame = window.startGame;
+window.startGame = function() {
+  document.getElementById('titleScreen').style.display     = 'none';
+  document.getElementById('dashboardScreen').style.display = 'none';
+  document.getElementById('gameCanvas').style.display      = 'block';
+  document.getElementById('hudTop').style.display          = 'flex';
+  document.getElementById('hudBot').style.display          = 'flex';
+  if (_origStartGame) _origStartGame();
+};
+
+// ═══════════════════════════════════════════════
+// CANVAS PERSONNAGE — VRAI MAGE À LA LANTERNE
+// ═══════════════════════════════════════════════
+
+let charAnimFrame = null;
+
+function initCharCanvas() {
+  const c = document.getElementById('charCanvas');
+  if (!c) return;
+  c.width  = c.offsetWidth  || 400;
+  c.height = c.offsetHeight || 160;
+  animMageHero(c);
+
+  // Mini preview dans tab héros
+  const p = document.getElementById('heroPreviewCanvas');
+  if (p) animMageHero(p, 0.65);
+}
+
+function animMageHero(canvas, scale) {
+  if (canvas === document.getElementById('charCanvas') && charAnimFrame) {
+    cancelAnimationFrame(charAnimFrame);
+  }
+
+  const ctx = canvas.getContext('2d');
+  const sc  = scale || 1;
+  let t     = 0;
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const cx = canvas.width  * 0.5;
+    const cy = canvas.height * 0.82;
+
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.scale(sc, sc);
+
+    drawMage(ctx, t);
+
+    ctx.restore();
+    t++;
+
+    const raf = requestAnimationFrame(draw);
+    if (canvas === document.getElementById('charCanvas')) charAnimFrame = raf;
+  }
+
+  draw();
+}
+
+function drawMage(ctx, t) {
+  const now     = t * 16; // simule Date.now() progression
+  const bob     = Math.sin(t * 0.04) * 2;
+  const flicker = 0.82 + Math.sin(t / 4.3) * 0.12 + Math.sin(t / 8.1) * 0.06;
+
+  ctx.save();
+  ctx.translate(0, bob);
+
+  // Halo sol
+  const hg = ctx.createRadialGradient(16, 12, 0, 16, 8, 52 * flicker);
+  hg.addColorStop(0, `rgba(255,170,0,${0.18 * flicker})`);
+  hg.addColorStop(1, 'transparent');
+  ctx.fillStyle = hg;
+  ctx.fillRect(-40, -50, 100, 80);
+
+  // Ombre
+  ctx.fillStyle = 'rgba(0,0,0,0.22)';
+  ctx.beginPath(); ctx.ellipse(0, 22, 14, 5, 0, 0, Math.PI * 2); ctx.fill();
+
+  // Jambes
+  ctx.fillStyle = '#3d2a1a';
+  ctx.fillRect(-7, 8, 7, 14);
+  ctx.fillStyle = '#2a1a0e';
+  ctx.fillRect(-6, 21, 6, 8);
+  ctx.fillStyle = '#4a3320';
+  ctx.fillRect(1, 8, 7, 14);
+  ctx.fillStyle = '#331f0e';
+  ctx.fillRect(1, 21, 6, 8);
+
+  // Cape
+  ctx.fillStyle = '#111118';
+  ctx.shadowBlur = 6; ctx.shadowColor = 'rgba(80,40,100,0.3)';
+  ctx.beginPath();
+  ctx.moveTo(-14, -10); ctx.lineTo(14, -10);
+  ctx.lineTo(16, 14); ctx.lineTo(-12, 14);
+  ctx.closePath(); ctx.fill();
+  ctx.strokeStyle = '#2a2230'; ctx.lineWidth = 1; ctx.stroke();
+  ctx.shadowBlur = 0;
+
+  // Ceinture
+  ctx.fillStyle = '#6b4c1e'; ctx.fillRect(-10, 4, 20, 3);
+  ctx.fillStyle = '#c8922a'; ctx.fillRect(-3, 3, 6, 5);
+
+  // Bras gauche
+  ctx.fillStyle = '#3d2810';
+  ctx.fillRect(-14, -4, 6, 11);
+  ctx.fillStyle = '#c8824a';
+  ctx.beginPath(); ctx.arc(-11, 8, 3.5, 0, Math.PI * 2); ctx.fill();
+
+  // Bras droit + LANTERNE
+  ctx.fillStyle = '#3d2810';
+  ctx.fillRect(8, -4, 6, 11);
+  ctx.fillStyle = '#c8824a';
+  ctx.beginPath(); ctx.arc(11, 8, 3.5, 0, Math.PI * 2); ctx.fill();
+
+  // Lanterne
+  const ly = 12;
+  ctx.strokeStyle = '#666'; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(11, ly - 4); ctx.lineTo(11, ly + 4); ctx.stroke();
+
+  const lg = ctx.createRadialGradient(11, ly + 8, 0, 11, ly + 8, 22 * flicker);
+  lg.addColorStop(0, `rgba(255,200,0,${0.55 * flicker})`);
+  lg.addColorStop(0.5, `rgba(255,120,0,${0.25 * flicker})`);
+  lg.addColorStop(1, 'transparent');
+  ctx.fillStyle = lg;
+  ctx.fillRect(-12, ly - 2, 52, 36);
+
+  ctx.fillStyle = '#333'; ctx.fillRect(5, ly + 2, 12, 14); ctx.fillRect(5, ly, 12, 4);
+  ctx.fillStyle = '#444'; ctx.fillRect(5, ly + 16, 12, 3);
+
+  const fR = (150 + Math.sin(t / 2.5) * 40) | 0;
+  const fG = (90  + Math.sin(t / 3.75) * 30) | 0;
+  ctx.fillStyle = `rgb(${fR},${fG},0)`;
+  ctx.shadowBlur = 10 * flicker; ctx.shadowColor = '#ff9900';
+  ctx.fillRect(7, ly + 4, 8, 10);
+  ctx.shadowBlur = 0;
+  ctx.strokeStyle = '#666'; ctx.lineWidth = 1;
+  ctx.strokeRect(5, ly, 12, 20);
+
+  // Torse
+  ctx.fillStyle = '#181420'; ctx.fillRect(-8, -10, 16, 16);
+
+  // Cou
+  ctx.fillStyle = '#a06030'; ctx.fillRect(-3, -16, 6, 7);
+
+  // Capuche
+  ctx.fillStyle = '#08060e';
+  ctx.beginPath(); ctx.ellipse(1, -18, 9, 8, 0.1, 0, Math.PI * 2); ctx.fill();
+
+  ctx.fillStyle = '#151020';
+  ctx.shadowBlur = 4; ctx.shadowColor = 'rgba(100,60,150,0.3)';
+  ctx.beginPath();
+  ctx.moveTo(-12, -12); ctx.quadraticCurveTo(-13, -26, -1, -30);
+  ctx.quadraticCurveTo(11, -26, 10, -12); ctx.quadraticCurveTo(5, -10, -1, -9);
+  ctx.quadraticCurveTo(-7, -10, -12, -12); ctx.closePath(); ctx.fill();
+  ctx.shadowBlur = 0;
+  ctx.strokeStyle = '#2a2035'; ctx.lineWidth = 1.2; ctx.stroke();
+
+  ctx.fillStyle = '#050408';
+  ctx.beginPath();
+  ctx.moveTo(-8, -13); ctx.quadraticCurveTo(-8, -24, 0, -27);
+  ctx.quadraticCurveTo(8, -24, 7, -13); ctx.quadraticCurveTo(3, -11, 0, -11);
+  ctx.quadraticCurveTo(-4, -11, -8, -13); ctx.closePath(); ctx.fill();
+
+  // Yeux
+  const eyeG = 0.4 + Math.sin(t / 25) * 0.15;
+  ctx.fillStyle = `rgba(255,180,60,${eyeG})`;
+  ctx.shadowBlur = 8; ctx.shadowColor = '#ffaa00';
+  ctx.beginPath(); ctx.arc(-3, -20, 1.8, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc( 3, -20, 1.8, 0, Math.PI * 2); ctx.fill();
+  ctx.shadowBlur = 0;
+
+  ctx.restore();
+}
+
+// Sync weapon selection on load
+document.addEventListener('DOMContentLoaded', () => {
+  const savedWeapon = localStorage.getItem('vs_weapon') || 'pistol';
+  document.querySelectorAll('.weapon-card').forEach(c => {
+    c.classList.remove('selected');
+    if (c.dataset.weapon === savedWeapon) c.classList.add('selected');
+  });
+});
+</script>
+</body>
+</html>
